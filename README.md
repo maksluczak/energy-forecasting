@@ -1,58 +1,87 @@
-# Energy Consumption Anomaly Prediction
-### Python in Electrical Engineering – projekt ML
+# Energy Consumption Multi-Step Forecasting
+### Python in Electrical Engineering – Machine Learning Project
 
-## Struktura projektu
+This project focuses on predicting multi-step household electricity consumption using machine learning and deep learning approaches. It aggregates raw minute-by-minute consumption data into hourly intervals, engineers cyclic calendar features and autoregressive lags, and compares three distinct modeling paradigms to forecast energy loads up to 24 hours ahead.
+
+---
+
+## Project Goal
+
+The primary objective is to build a data pipeline capable of forecasting **Global Active Power** over a 24-hour horizon. Accurate load forecasting is essential in Electrical Engineering for optimizing smart grid operations, peak-shaving strategies, energy storage management, and identifying demand-side anomalies.
+
+---
+
+## Repository Structure
 
 ```
-energy_project/
-├── data/
-│   └── household_power_consumption.csv   ← tu wrzuć dataset
-├── src/
-│   ├── __init__.py
-│   ├── features.py      # Krok 1: inżynieria cech
-│   ├── models.py        # Kroki 3, 4, 5: Ridge, XGBoost, LSTM
-│   └── evaluation.py    # Krok 6: metryki i wykresy
-├── reports/             # tu lądują wykresy (auto-tworzony)
-├── main.py              # Kroki 2–6: główny pipeline
-├── requirements.txt
-└── README.md
+├── README.md           # project documentation and setup guide
+├── data                # data directory 
+│   ├── processed            # aggregated hourly clean CSV
+│   │   └── hourly_clean.csv
+│   └── raw                  # raw txt file
+│       └── household_power_consumption.txt
+├── main.py             # main pipeline execution script
+├── notebooks           # research
+│   └── 01_eda_and_anomalies.ipynb
+├── reports             # plots and artifacts
+│   ├── forecast_comparison.png
+│   └── metrics_comparison.png
+├── requirements.txt    # python environment dependencies
+└── src
+    ├── config.py            # global constants and paths
+    ├── data_loader.py       # raw data consumtion and hourly resampling
+    ├── evaluation.py        # custom metric math
+    ├── features.py          # calendar encoding and time-series lags
+    └── models.py            # models definition
 ```
 
-## Dataset
+---
 
-UCI Household Power Consumption (minutowy):
-- `Global_active_power` [kW] – główny target prognozy
-- `Global_reactive_power`, `Voltage`, `Global_intensity`
-- `Sub_metering_1/2/3`
+## Dataset & Reference Links
 
-## Instalacja zależności
+The pipeline is pre-configured to use **Individual Household Power Consumption Dataset**. 
+* **Official Kaggle Link:** [UCI Household Power Consumption Dataset on Kaggle](https://www.kaggle.com/datasets/uciml/electric-power-consumption-data-set)
 
+### Target & Features:
+* **`Global_active_power` [kW]** – The primary forecasting target.
+* **Sensors & Electrical Metrics:** `Global_reactive_power`, `Voltage`, `Global_intensity`
+* **Sub-meterings:** `Sub_metering_1` (Kitchen), `Sub_metering_2` (Laundry), `Sub_metering_3` (Climate Control)
+
+---
+
+## How to Use & Get Started
+
+### 1. Installation
+Clone the repository, set up a virtual environment, and install the required dependencies:
 ```bash
+# Activate your virtual environment (.venv) first, then run:
 pip install -r requirements.txt
 ```
 
-## Uruchomienie
+### 2. Place the Data
+Create the directory structure data/raw/ if it doesn't exist yet, download the dataset, and place the unzipped raw file inside it:
+```bash
+# Activate your virtual environment (.venv) first, then run:
+data/raw/household_power_consumption.txt
+```
+
+### 3. Execution
 
 ```bash
 python main.py
 ```
 
-## Modele
+## Models
 
-| Model   | Typ         | Rola                          |
-|---------|-------------|-------------------------------|
-| Ridge   | Liniowy L2  | Baseline / punkt odniesienia  |
-| XGBoost | Drzewiasty  | Główny model produkcyjny      |
-| LSTM    | Sieć RNN    | Model sekwencyjny (deep)      |
+| Model   | Typ                      | Rola                 |
+|---------|--------------------------|----------------------|
+| Ridge   | Linear L2 Regression     | Baseline / benchmark |
+| XGBoost | Gradient Boosted Trees   | Main tabular model   |
+| LSTM    | Recurrent Neural Network | 3D sequenced model   |
 
-## Podział danych
+## Results
 
-- **80% train / 20% test** – chronologicznie (bez shuffle)
-- Skalowanie: `RobustScaler` (odporny na anomalie/piki)
-
-## Wyniki
-
-- Metryki MAE / RMSE / MAPE drukowane w konsoli
-- Wykresy zapisywane w `reports/`:
-  - `forecast_comparison.png` – szereg czasowy prognoz vs rzeczywistości
-  - `metrics_comparison.png`  – porównanie metryk słupkami
+- MAE / RMSE / MAPE metrics printed in console
+- Visual Reports saved inside `reports/`:
+  - `forecast_comparison.png` – time series of forecasts vs reality
+  - `metrics_comparison.png`  – comparison of metrics
