@@ -9,12 +9,14 @@ from keras.optimizers import Adam
 from src.config import N_OTHER
 
 def build_ridge_model(alpha: float = 1.0) -> MultiOutputRegressor:
+    # baseline model - multioutput wrapper will train a separate Ridge regressor for each forecast hour
     return MultiOutputRegressor(
         Ridge(alpha=alpha, max_iter=2000),
         n_jobs=-1,
     )
 
 def build_xgboost_model(n_estimators: int = 200, max_depth: int = 6, learning_rate: float = 0.05, subsample: float = 0.8, colsample_bytree: float = 0.8, random_state: int = 42) -> MultiOutputRegressor:
+    # heavy-lifter tree model using histogram method for speed. n_jobs=-1 speeds up the training significantly
     base = XGBRegressor(
         n_estimators=n_estimators,
         max_depth=max_depth,
@@ -29,6 +31,7 @@ def build_xgboost_model(n_estimators: int = 200, max_depth: int = 6, learning_ra
     return MultiOutputRegressor(base, n_jobs=-1)
 
 def reshape_for_lstm(X: np.ndarray, lookback_hours: int) -> np.ndarray:
+    # 2D to 3D magic - converts flat tabular data into [samples, timesteps, features] required by LSTM
     num_samples = X.shape[0]
     num_features_per_step = N_OTHER + 1
 
@@ -41,8 +44,8 @@ def reshape_for_lstm(X: np.ndarray, lookback_hours: int) -> np.ndarray:
 
     return X_3d
 
-
 def build_lstm_model(input_shape: tuple, output_size: int) -> Sequential:
+    # deep learning setup - stacked LSTM layers with dropouts to fight overfitting on sequence data
     model = Sequential(
         [
             LSTM(64, input_shape=input_shape, return_sequences=True, name='lstm_1'),

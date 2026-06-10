@@ -32,11 +32,11 @@ def _compute_metrics(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]
     return results
 
 def evaluate_models(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]) -> dict[str, dict[str, float]]:
-    # get scores and print a nice, clean terminal table to compare our models
+    # get scores and print a terminal table to compare our models
     results = _compute_metrics(y_true, predictions_dict)
 
     print("\n" + "═" * 62)
-    print("        EVALUATION METRICS – test set")
+    print("            EVALUATION METRICS – test set")
     print("═" * 62)
     print(f"  {'Model':<12}  {'MAE':>10}  {'RMSE':>10}  {'MAPE (%)':>10}")
     print("  " + "─" * 58)
@@ -62,10 +62,10 @@ def plot_predictions(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]
     }
     default_colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12']
 
-    # chart 1: Time series for 1-hour ahead prediction
+    # chart 1: time series for 1-hour ahead prediction
     fig1, ax1 = plt.subplots(figsize=(16, 5))
 
-    # plot the actual real energy consumption (black line)
+    # plot the actual real energy consumption
     ax1.plot(hours, true_h1, color='black', linewidth=1.8, label='Actual', zorder=5)
 
     # loop and draw prediction lines for each model
@@ -105,7 +105,7 @@ def plot_predictions(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]
     fig2, (ax2a, ax2b) = plt.subplots(1, 2, figsize=(13, 5))
     fig2.suptitle('Model Comparison – Error Metrics', fontsize=14, fontweight='bold')
 
-    # left plot: MAE and RMSE bars stacked side-by-side with labels on top
+    # left plot: MAE and RMSE bars
     b1 = ax2a.bar(x - width/2, mae_vals,  width, label='MAE',  color='#3498db', alpha=0.85)
     b2 = ax2a.bar(x + width/2, rmse_vals, width, label='RMSE', color='#e74c3c', alpha=0.85)
     ax2a.bar_label(b1, fmt='%.3f', padding=3, fontsize=9)

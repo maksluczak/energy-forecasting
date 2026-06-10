@@ -9,30 +9,37 @@ from src.models import (build_ridge_model, build_xgboost_model, reshape_for_lstm
 from src.evaluation import evaluate_models, plot_predictions
 
 def main() -> None:
+    # sanity check
     if not os.path.exists(RAW_DATA_PATH) and not os.path.exists(PROCESSED_DATA_PATH):
         print(f"\nData not found...")
         sys.exit(1)
 
+    # load preprocessed hourly data
     df = load_clean_data()
 
+    # extract features and future targets from the dataframe
     X, y = prepare_features_and_targets(df, LOOKBACK_HOURS, FORECAST_HOURS)
 
     split = int(len(X) * TRAIN_RATIO)
     X_train, X_test = X[:split], X[split:]
     y_train, y_test = y[:split], y[split:]
 
+    # scale features using RobustScaler to handle spikes and outliers in power usage
     scaler = RobustScaler()
     X_train_sc = scaler.fit_transform(X_train)
     X_test_sc = scaler.transform(X_test)
 
+    # model 1: Ridge Regression
     ridge = build_ridge_model()
     ridge.fit(X_train_sc, y_train)
     y_pred_ridge = ridge.predict(X_test_sc)
 
+    # model 2: XGBoost Regressor
     xgb_model = build_xgboost_model()
     xgb_model.fit(X_train_sc, y_train)
     y_pred_xgb = xgb_model.predict(X_test_sc)
 
+    # model 3: Deep Learning (LSTM)
     X_train_3d = reshape_for_lstm(X_train_sc, LOOKBACK_HOURS)
     X_test_3d = reshape_for_lstm(X_test_sc, LOOKBACK_HOURS)
 
