@@ -6,9 +6,7 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
 from keras.optimizers import Adam
 
-N_CALENDAR = 7
-N_SENSOR = 6
-N_OTHER = N_CALENDAR + N_SENSOR
+from src.config import N_OTHER
 
 def build_ridge_model(alpha: float = 1.0) -> MultiOutputRegressor:
     return MultiOutputRegressor(
