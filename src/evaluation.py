@@ -1,12 +1,3 @@
-"""
-src/evaluation.py
-=================
-Ewaluacja i porównanie modeli
-
-Oblicza MAE, RMSE, MAPE dla każdego modelu na zbiorze testowym
-i generuje dwa wykresy zapisywane automatycznie do katalogu reports/.
-"""
-
 from __future__ import annotations
 
 import os
@@ -14,31 +5,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-
-# ── Metryki błędu ─────────────────────────────────────────────────────────────
+from src.config import SAVE_DIR
 
 def mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """Mean Absolute Error."""
+    # mean absolute error
     return float(np.mean(np.abs(y_true - y_pred)))
 
-
 def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """Root Mean Squared Error."""
+    # root mean squared error
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
-
 def mape(y_true: np.ndarray, y_pred: np.ndarray, eps: float = 1e-6) -> float:
-    """Mean Absolute Percentage Error (pomija próbki bliskie zeru)."""
+    # mean absolute percentage error
     mask = np.abs(y_true) > eps
     return float(np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100)
 
-
-# ── Obliczanie metryk ────────────────────────────────────────────────────────────
-
-def _compute_metrics(
-    y_true: np.ndarray,
-    predictions_dict: dict[str, np.ndarray],
-) -> dict[str, dict[str, float]]:
+def _compute_metrics(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]) -> dict[str, dict[str, float]]:
     results: dict[str, dict[str, float]] = {}
     for name, y_pred in predictions_dict.items():
         results[name] = {
@@ -48,14 +30,7 @@ def _compute_metrics(
         }
     return results
 
-
-# ── Główna funkcja ewaluacji ──────────────────────────────────────────────────
-
-def evaluate_models(
-    y_true: np.ndarray,
-    predictions_dict: dict[str, np.ndarray],
-) -> dict[str, dict[str, float]]:
-
+def evaluate_models(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray]) -> dict[str, dict[str, float]]:
     results = _compute_metrics(y_true, predictions_dict)
 
     print("\n" + "═" * 62)
@@ -69,17 +44,8 @@ def evaluate_models(
 
     return results
 
-
-# ── Generowanie wykresów ──────────────────────────────────────────────────────
-
-def plot_predictions(
-    y_true: np.ndarray,
-    predictions_dict: dict[str, np.ndarray],
-    save_dir: str = 'reports',
-    n_days: int = 7,
-) -> None:
-
-    os.makedirs(save_dir, exist_ok=True)
+def plot_predictions(y_true: np.ndarray, predictions_dict: dict[str, np.ndarray], n_days: int = 7) -> None:
+    os.makedirs(SAVE_DIR, exist_ok=True)
 
     # Ograniczamy do n_days pełnych dni
     n_show    = min(n_days * 24, len(y_true))
@@ -121,7 +87,7 @@ def plot_predictions(
     ax1.xaxis.set_minor_locator(mticker.MultipleLocator(6))
     plt.tight_layout()
 
-    path1 = os.path.join(save_dir, 'forecast_comparison.png')
+    path1 = os.path.join(SAVE_DIR, 'forecast_comparison.png')
     fig1.savefig(path1, dpi=150)
     plt.close(fig1)
 
@@ -161,10 +127,6 @@ def plot_predictions(
     ax2b.grid(axis='y', alpha=0.3)
 
     plt.tight_layout()
-    path2 = os.path.join(save_dir, 'metrics_comparison.png')
+    path2 = os.path.join(SAVE_DIR, 'metrics_comparison.png')
     fig2.savefig(path2, dpi=150)
     plt.close(fig2)
-
-    print(f"\n  Wykresy zapisane:")
-    print(f"    → {path1}")
-    print(f"    → {path2}")
