@@ -54,20 +54,20 @@ The pipeline is pre-configured to use **Individual Household Power Consumption D
 ### 1. Installation
 Clone the repository, set up a virtual environment, and install the required dependencies:
 ```bash
-# Activate your virtual environment (.venv) first, then run:
+# activate your virtual environment (.venv) first, then run:
 pip install -r requirements.txt
 ```
 
 ### 2. Place the Data
 Create the directory structure data/raw/ if it doesn't exist yet, download the dataset, and place the unzipped raw file inside it:
 ```bash
-# Activate your virtual environment (.venv) first, then run:
 data/raw/household_power_consumption.txt
 ```
 
 ### 3. Execution
 
 ```bash
+# activate your virtual environment (.venv) first, then run:
 python main.py
 ```
 
