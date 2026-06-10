@@ -2,17 +2,11 @@ import os
 import sys
 from sklearn.preprocessing import RobustScaler
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from src.config import RAW_DATA_PATH, PROCESSED_DATA_PATH
+from src.config import RAW_DATA_PATH, PROCESSED_DATA_PATH, LOOKBACK_HOURS, FORECAST_HOURS, TRAIN_RATIO, LSTM_EPOCHS, BATCH_SIZE
 from src.data_loader import load_clean_data
 from src.features import prepare_features_and_targets
 from src.models import (build_ridge_model, build_xgboost_model, reshape_for_lstm, build_lstm_model)
 from src.evaluation import evaluate_models, plot_predictions
-
-LOOKBACK_HOURS = 24
-FORECAST_HOURS = 24
-TRAIN_RATIO = 0.80
-LSTM_EPOCHS = 30
-BATCH_SIZE = 128
 
 def main() -> None:
     if not os.path.exists(RAW_DATA_PATH) and not os.path.exists(PROCESSED_DATA_PATH):

@@ -29,4 +29,5 @@ def load_clean_data() -> pd.DataFrame:
     if not os.path.exists(PROCESSED_DATA_PATH):
         load_raw_data_and_export_to_csv()
 
+    # return .csv data as dataframe
     return pd.read_csv(PROCESSED_DATA_PATH, index_col='datetime', parse_dates=True)
