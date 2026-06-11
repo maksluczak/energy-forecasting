@@ -1,7 +1,7 @@
 # Energy Consumption Multi-Step Forecasting
 ### Python in Electrical Engineering – Machine Learning Project
 
-This project focuses on predicting multi-step household electricity consumption using machine learning and deep learning approaches. It aggregates raw minute-by-minute consumption data into hourly intervals, engineers cyclic calendar features and autoregressive lags, and compares three distinct modeling paradigms to forecast energy loads up to 24 hours ahead.
+This project focuses on predicting household electricity consumption using machine learning and deep learning. It aggregates raw minute-by-minute consumption data into hourly intervals, engineers cyclic calendar features and autoregressive lags, and compares three modeling paradigms to forecast energy loads up to 24 hours ahead.
 
 ---
 
